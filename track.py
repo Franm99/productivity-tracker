@@ -59,19 +59,23 @@ def compute_totals(file: str) -> dict:
         csv_reader = reader(f, delimiter=",")
         for row in csv_reader:
             records[row[0]] = int(row[1]) + records.get(row[0], 0)
-
-    print("Time per action")
-    for action in records:
-        print(f"{action:7}\t\t", str(timedelta(seconds=records[action])), "h")
-
     return records
 
 
 def show_results(records: dict):
-    fig, ax = plt.subplots()
-    ax.pie(records.values(), labels=records.keys(), autopct='%1.1f%%')
+    plt.figure()
+    seconds_spent = sum(records.values())
+
+    def autopct_format(pctg):
+        value = timedelta(seconds=round(seconds_spent * pctg / 100))
+        return f'{pctg:.2f}%\n({value})'
+
+    plt.pie(records.values(), labels=records.keys(), autopct=autopct_format,
+            wedgeprops={'linewidth': 3.0, 'edgecolor': 'white'})
     plt.title(str(date.today()))
+    plt.tight_layout()
     plt.show()
+    # todo: Create plot x-y - time-action
 
 
 if __name__ == "__main__":
@@ -87,7 +91,9 @@ if __name__ == "__main__":
         task, time_spent = track_performance()
         save_action(filename, task, time_spent)
 
-        i = input("Keep tracking? [y/n]")
+        i = input("Keep tracking? [y/n]").lower()
+        while i not in ("y", "n"):
+            i = input("Keep tracking? [y/n]").lower()
         finish = True if i == "n" else False
 
     totals = compute_totals(filename)
