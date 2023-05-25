@@ -1,3 +1,6 @@
 .idea/
 venv/
 daily_logs/
+tests/
+.pytest_cache/
+tmp_logs/
