@@ -1,8 +1,6 @@
 from .tracker import Tracker
 from .view import CmdView
-from .utils import ACTIVITY, ReportType
-
-import datetime
+from .utils import Activity, ReportType
 
 
 class Controller:
@@ -28,9 +26,9 @@ class Controller:
         report.show()
 
     def ask_new_entry(self):
-        activities = [a.name for a in ACTIVITY]
+        activities = [a.name for a in Activity]
         current_activity = self.ui.get_new_entry(activities)
-        self.tracker.start(ACTIVITY(current_activity).name)
+        self.tracker.start(Activity(current_activity).name)
 
     def wait(self):
         self.ui.input_to_finish()

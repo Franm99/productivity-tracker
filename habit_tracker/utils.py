@@ -3,6 +3,8 @@ from pathlib import Path
 
 DEF_LOGS_DIR = Path('daily_logs')
 
+CSV_FIELDNAMES = ["activity", "interval", "start_time"]
+
 
 class ReportType(Enum):
     DAY = auto()
@@ -10,7 +12,7 @@ class ReportType(Enum):
     MONTH = auto()
 
 
-class ACTIVITY(Enum):
+class Activity(Enum):
     PROJECTS = 0
     HOUSE = 1
     REST = 2
