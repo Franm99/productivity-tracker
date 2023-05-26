@@ -28,7 +28,7 @@ class Report(ABC):
 
 class DailyReport(Report):
     """ Daily report. """
-    def __init__(self, db: CSVDatabase):
+    def __init__(self, db):
         """
         Class Constructor.
         :param db: Database to take records from.

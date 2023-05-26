@@ -7,7 +7,7 @@ import datetime
 
 if __name__ == '__main__':
 
-    tracker = Tracker.create_csv_tracker(str(datetime.date.today()))
+    tracker = Tracker.create_csv_tracker(datetime.date.today())
     view = CmdView()
     controller = Controller(tracker, view)
 

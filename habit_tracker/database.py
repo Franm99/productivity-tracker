@@ -4,6 +4,7 @@ import pathlib
 from abc import ABC, abstractmethod
 from typing import List
 
+# TODO refactor how database saves data: create weeks and months folders
 
 class RDBMS(ABC):
     """
@@ -21,7 +22,7 @@ class RDBMS(ABC):
         pass
 
     @abstractmethod
-    def update(self, **kwargs):
+    def update(self, **kwargs) -> bool:
         pass
 
     @abstractmethod
@@ -70,15 +71,19 @@ class CSVDatabase(RDBMS):
         except FileNotFoundError:
             return []
 
-    def update(self, **kwargs) -> None:
+    def update(self, **kwargs) -> bool:
         """
         Creates a new entry (new row) on the CSV file.
         :param kwargs: Key-value pairs to add to the row.
         :return: None
         """
-        with open(self._file_path, "a+", newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=self._fieldnames)
-            writer.writerow(kwargs)
+        try:
+            with open(self._file_path, "a+", newline='') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=self._fieldnames)
+                writer.writerow(kwargs)
+            return True
+        except OSError:
+            return False
 
     def delete(self) -> None:
         """
