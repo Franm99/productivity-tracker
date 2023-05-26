@@ -3,7 +3,7 @@ import pathlib
 import time
 
 from .database import RDBMS, CSVDatabase
-from .report import DailyReport  # , WeeklyReport, MonthlyReport
+from .report import Report, DailyReport  # , WeeklyReport, MonthlyReport
 from .utils import CSV_FIELDNAMES, DEF_LOGS_DIR, ReportType
 
 
@@ -21,8 +21,8 @@ class Tracker:
         self._db = db
 
         self.current_activity: str = ''
-        self.start_timestamp = 0.0
-        self.start_hour = None
+        self.start_time = None
+        self.interval_start = None
         self.interval = 0
 
     @classmethod
@@ -37,39 +37,46 @@ class Tracker:
         csv_database = CSVDatabase(log_file, fieldnames=CSV_FIELDNAMES)
         return cls(date=date, db=csv_database)
 
-    def start(self, activity):
+    def start(self, activity: str) -> None:
         """
-        Start tracking a new user activity.
-        :return:
+        Start tracking a new activity.
+        :param activity: Current activity being performed.
+        :return: None
         """
         self.current_activity = activity
-        self.start_hour = datetime.now().strftime("%H:%M:%S")
-        self.start_timestamp = time.time()
+        self.start_time = datetime.now().strftime("%H:%M:%S")
+        self.interval_start = time.time()
 
-    def stop(self):
+    def stop(self) -> None:
         """
-        Stop tracking activity.
-        :return: Time spent in last activity.
+        Stop tracking current activity.
+        :return: None
         """
         # TODO: add logic to catch if stop is called before start.
-        self.interval = int(time.time() - self.start_timestamp)
+        self.interval = int(time.time() - self.interval_start)
 
-    def add_track(self):
+    def add_record(self) -> None:
+        """
+        Add record to database.
+        :return: None
+        """
         record = {
             CSV_FIELDNAMES[0]: self.current_activity,
             CSV_FIELDNAMES[1]: self.interval,
-            CSV_FIELDNAMES[2]: self.start_hour
+            CSV_FIELDNAMES[2]: self.start_time
         }
         self._db.update(**record)
 
-    def generate_report(self, type_: ReportType):
+    def generate_report(self, type_: ReportType) -> Report:
         """
-        Generates a Report class based on the tracked data.
+        Generates a report (Daily, Weekly or Monthly) about records in the database for the user.
+        :param type_: Type of report to be retrieved.
+        :return: Report
         """
         if type_ == ReportType.DAY:
             return DailyReport(self._db)
         elif type_ == ReportType.WEEK:
             raise NotImplementedError("Weekly report not supported yet.")
         elif type_ == ReportType.MONTH:
-            raise NotImplementedError("Monthly report not supporetd yet.")
+            raise NotImplementedError("Monthly report not supported yet.")
 
