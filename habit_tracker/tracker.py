@@ -2,22 +2,22 @@ from datetime import datetime
 import pathlib
 import time
 
-from .database import RDBMS, CSVDatabase
-from .report import Report, DailyReport  # , WeeklyReport, MonthlyReport
-from .utils import CSV_FIELDNAMES, DEF_LOGS_DIR, ReportType
+from .database import CSVDatabase
+from .report import Report
 
 
 class Tracker:
     """
     Tracks user daily habits and stores them to a database.
     """
-    def __init__(self, date: datetime.date, db: RDBMS):
+    # TODO make constructor generic to other types of database
+    def __init__(self, date: datetime.date, db: CSVDatabase):
         """
         Class Constructor.
         :param date: Day to be tracked.
         :param db: Database to use.
         """
-        self._date = str(date)
+        self._date = date
         self._db = db
 
         self.current_activity: str = ''
@@ -28,15 +28,14 @@ class Tracker:
         self.is_tracking = False
 
     @classmethod
-    def create_csv_tracker(cls, date: datetime.date, logs_dir: pathlib.Path = DEF_LOGS_DIR):
+    def create_csv_tracker(cls, date: datetime.date, logs_dir: pathlib.Path = None):
         """
         Class method. Provides an interface to create a Tracker instance using a database based on CSV files.
         :param date: Day to be tracked.
         :param logs_dir: [Optional] Place to save CSV files.
         :return: Tracker instance
         """
-        log_file = logs_dir / f"{date}.csv"
-        csv_database = CSVDatabase(log_file, fieldnames=CSV_FIELDNAMES)
+        csv_database = CSVDatabase(logs_dir=logs_dir)
         return cls(date=date, db=csv_database)
 
     def start(self, activity: str) -> None:
@@ -46,7 +45,7 @@ class Tracker:
         :return: None
         """
         self.current_activity = activity
-        self.start_time = datetime.now().strftime("%H:%M:%S")
+        self.start_time = datetime.now().strftime("%H:%M:%S")  # TODO change to timestamp for easier postprocessing.
         self.interval_start = time.time()
         self.is_tracking = True
 
@@ -64,32 +63,15 @@ class Tracker:
     def add_record(self) -> bool:
         """
         Add record to database.
-        :return: False if something fails, True elsewhere.
+        :return: False if couldn't add the record, True elsewhere.
         """
         if self.is_tracking:
             return False
         else:
-            record = {
-                CSV_FIELDNAMES[0]: self.current_activity,
-                CSV_FIELDNAMES[1]: self.interval,
-                CSV_FIELDNAMES[2]: self.start_time
-            }
-            return self._db.update(**record)
+            record = [self.current_activity, self.interval, self.start_time]
+            self._db.update_log(self._date, record)
+            return True
 
-    def generate_report(self, type_: ReportType) -> Report:
-        """
-        Generates a report (Daily, Weekly or Monthly) about records in the database for the user.
-        :param type_: Type of report to be retrieved.
-        :return: Report
-        """
-        if type_ == ReportType.DAY:
-            return DailyReport(self._db)
-        elif type_ == ReportType.WEEK:
-            raise NotImplementedError("Weekly report not supported yet.")
-        elif type_ == ReportType.MONTH:
-            raise NotImplementedError("Monthly report not supported yet.")
-
-    @property
-    def db(self):
-        return self._db
-
+    def generate_report(self, start_date: datetime.date, end_date: datetime.date = None):
+        records = self._db.read_interval(start_date, end_date)
+        return Report(records)

@@ -4,9 +4,8 @@ import re
 import time
 
 from habit_tracker.tracker import Tracker
-from habit_tracker.report import DailyReport, WeeklyReport, MonthlyReport
+from habit_tracker.report import Report
 from habit_tracker.database import CSVDatabase
-from habit_tracker.utils import ReportType
 
 
 @pytest.fixture()
@@ -24,7 +23,7 @@ class TestTrackerWithCSVDatabase:
         isinstance(tracker_with_csv_db, Tracker)
 
         # AND a CSVDatabase instance is created within the tracker instance
-        isinstance(tracker_with_csv_db.db, CSVDatabase)
+        isinstance(tracker_with_csv_db._db, CSVDatabase)
 
     def test_start_saves_current_activity(self, tracker_with_csv_db):
         # GIVEN a tracker instance with a CSV database and a sample activity
@@ -89,8 +88,10 @@ class TestTrackerWithCSVDatabase:
         # THEN a green flag is returned
         assert flag
 
-    def test_record_saved_on_db(self, tracker_with_csv_db):
+    def test_record_saved_on_db(self, tmp_path):
         # GIVEN a tracker instance with a CSV database and a sample activity
+        sample_date = datetime.date(1999, 1, 1)
+        tracker_with_csv_db = Tracker.create_csv_tracker(sample_date, tmp_path)
         sample_activity = "sample_activity"
 
         # AND the tracker starts tracking
@@ -104,9 +105,9 @@ class TestTrackerWithCSVDatabase:
         tracker_with_csv_db.add_record()
 
         # THEN the database stores the expected record
-        expected_record = [sample_activity, str(tracker_with_csv_db.interval), tracker_with_csv_db.start_time]
-        actual_read = tracker_with_csv_db.db.read()[0]
-        assert actual_read == expected_record
+        expected = [sample_activity, str(tracker_with_csv_db.interval), tracker_with_csv_db.start_time]
+        actual = tracker_with_csv_db._db.read_log(sample_date)[0]
+        assert expected == actual
 
     def test_add_record_before_stop(self, tracker_with_csv_db):
         # GIVEN a tracker instance with a CSV database and a sample activity
@@ -122,26 +123,4 @@ class TestTrackerWithCSVDatabase:
         # THEN a red flag is returned
         assert not flag
 
-    def test_generate_daily_report(self, tracker_with_csv_db):
-        # GIVEN a tracker instance with a CSV database
-        # WHEN generating a daily report
-        report = tracker_with_csv_db.generate_report(ReportType.DAY)
-
-        # THEN a daily report object is obtained
-        isinstance(report, DailyReport)
-
-    def test_generate_weekly_report(self, tracker_with_csv_db):
-        # GIVEN a tracker instance with a CSV database
-        # WHEN generating a daily report
-        report = tracker_with_csv_db.generate_report(ReportType.WEEK)
-
-        # THEN a daily report object is obtained
-        isinstance(report, WeeklyReport)
-
-    def test_generate_monthly_report(self, tracker_with_csv_db):
-        # GIVEN a tracker instance with a CSV database
-        # WHEN generating a daily report
-        report = tracker_with_csv_db.generate_report(ReportType.MONTH)
-
-        # THEN a daily report object is obtained
-        isinstance(report, MonthlyReport)
+    # TODO tests for generate_report() method
