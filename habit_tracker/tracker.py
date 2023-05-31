@@ -72,6 +72,6 @@ class Tracker:
             self._db.update_log(self._date, record)
             return True
 
-    def generate_report(self, start_date: datetime.date, end_date: datetime.date = None):
+    def generate_report(self, start_date: datetime.date, end_date: datetime.date = None) -> Report:
         records = self._db.read_interval(start_date, end_date)
         return Report(records)

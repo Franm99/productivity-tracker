@@ -1,6 +1,8 @@
 from .tracker import Tracker
 from .view import CmdView
-from .utils import Activity, ReportType
+from .utils import Activity
+
+import datetime
 
 
 class Controller:
@@ -12,7 +14,7 @@ class Controller:
         :param view: User interface object implementing methods to communicate with the user.
         """
         self.tracker = model
-        self.ui = view
+        self.gui = view
 
     def run(self) -> None:
         """
@@ -22,12 +24,12 @@ class Controller:
         # TODO: This workflow is thought for only daily reports. Refactor.
         while True:
             self.ask_new_entry()
-            self.ui.show_selection(self.tracker.current_activity)
+            self.gui.show_selection(self.tracker.current_activity)
 
             self.wait()
             self.tracker.add_record()
 
-            if not self.ui.keep_tracking():
+            if not self.gui.keep_tracking():
                 break
 
     def generate_daily_report(self) -> None:
@@ -35,8 +37,8 @@ class Controller:
         Generate Daily report based on current data.
         :return: None
         """
-        report = self.tracker.generate_report(ReportType.DAY)
-        report.compute_time_per_activity()
+        report = self.tracker.generate_report(datetime.date.today())
+        report.daily_time_per_activity()
         report.show()
 
     def ask_new_entry(self) -> None:
@@ -45,7 +47,7 @@ class Controller:
         :return: None
         """
         activities = [a.name for a in Activity]
-        current_activity = self.ui.get_new_entry(activities)
+        current_activity = self.gui.get_new_entry(activities)
         self.tracker.start(Activity(current_activity).name)
 
     def wait(self) -> None:
@@ -53,5 +55,5 @@ class Controller:
         Wait for event to trigger the end of the tracking stage for the current activity.
         :return: None
         """
-        self.ui.input_to_finish()
+        self.gui.input_to_finish()
         self.tracker.stop()
