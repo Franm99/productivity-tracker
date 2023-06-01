@@ -5,7 +5,7 @@ import time
 
 from habit_tracker.tracker import Tracker
 from habit_tracker.report import Report
-from habit_tracker.database import CSVDatabase
+from habit_tracker.database.csv.database import CSVDatabase
 
 
 @pytest.fixture()
@@ -35,17 +35,6 @@ class TestTrackerWithCSVDatabase:
         # THEN the current activity is set to the given activity
         assert tracker_with_csv_db.current_activity == sample_activity
 
-    def test_start_time_format(self, tracker_with_csv_db):
-        # GIVEN a tracker instance with a CSV database and a sample activity
-        sample_activity = "sample_activity"
-
-        # WHEN starting to track an activity
-        tracker_with_csv_db.start(sample_activity)
-
-        # THEN the activity start time has the expected time format
-        pattern = re.compile("[0-9][0-9]:[0-5][0-9]:[0-5][0-9]")
-        assert pattern.match(tracker_with_csv_db.start_time)
-
     def test_stop(self, tracker_with_csv_db):
         # GIVEN a tracker instance with a CSV database and a sample activity
         sample_activity = "sample_activity"
@@ -57,8 +46,8 @@ class TestTrackerWithCSVDatabase:
         # WHEN stopping the tracking stage
         tracker_with_csv_db.stop()
 
-        # THEN a time interval has been recorded
-        assert tracker_with_csv_db.interval > 0
+        # THEN a time interval_seconds has been recorded
+        assert tracker_with_csv_db.interval_seconds > 0
 
         # AND the flag is_tracking is set to False
         assert not tracker_with_csv_db.is_tracking
@@ -68,8 +57,8 @@ class TestTrackerWithCSVDatabase:
         # When the tracker stops before been started
         tracker_with_csv_db.stop()
 
-        # THEN an empty time interval is saved
-        assert tracker_with_csv_db.interval == 0
+        # THEN an empty time interval_seconds is saved
+        assert tracker_with_csv_db.interval_seconds == 0
 
     def test_add_record_not_fail(self, tracker_with_csv_db):
         # GIVEN a tracker instance with a CSV database and a sample activity
@@ -105,7 +94,7 @@ class TestTrackerWithCSVDatabase:
         tracker_with_csv_db.add_record()
 
         # THEN the database stores the expected record
-        expected = [sample_activity, str(tracker_with_csv_db.interval), tracker_with_csv_db.start_time]
+        expected = tracker_with_csv_db.record.values()
         actual = tracker_with_csv_db._db.read_log(sample_date)[0]
         assert expected == actual
 

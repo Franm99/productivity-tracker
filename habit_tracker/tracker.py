@@ -1,6 +1,8 @@
-from datetime import datetime
+import datetime
 import pathlib
 import time
+
+from dataclasses import dataclass, asdict
 
 from .database.csv.database import CSVDatabase
 from .report import Report
@@ -21,9 +23,10 @@ class Tracker:
         self._db = db
 
         self.current_activity: str = ''
-        self.start_time = None
+        self.seconds_from_base_date = None
         self.interval_start = None
-        self.interval = 0
+        self.interval_seconds = 0
+        self.record = None
 
         self.is_tracking = False
 
@@ -45,7 +48,11 @@ class Tracker:
         :return: None
         """
         self.current_activity = activity
-        self.start_time = datetime.now().strftime("%H:%M:%S")  # TODO change to timestamp for easier postprocessing.
+
+        now = datetime.datetime.now()
+        timedelta = datetime.timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
+        self.seconds_from_base_date = str(int(timedelta.total_seconds()))
+
         self.interval_start = time.time()
         self.is_tracking = True
 
@@ -55,10 +62,12 @@ class Tracker:
         :return: None
         """
         if self.is_tracking:
-            self.interval = int(time.time() - self.interval_start)
+            self.interval_seconds = int(time.time() - self.interval_start)
             self.is_tracking = False
         else:
-            self.interval = 0
+            self.interval_seconds = 0
+
+        self.record = Record(self.current_activity, self.interval_seconds, self.seconds_from_base_date)
 
     def add_record(self) -> bool:
         """
@@ -68,10 +77,19 @@ class Tracker:
         if self.is_tracking:
             return False
         else:
-            record = [self.current_activity, self.interval, self.start_time]
-            self._db.update_log(self._date, record)
+            self._db.update_log(self._date, self.record.values())
             return True
 
     def generate_report(self, start_date: datetime.date, end_date: datetime.date = None) -> Report:
         records = self._db.read_interval(start_date, end_date)
         return Report(records)
+
+
+@dataclass
+class Record:
+    activity: str
+    interval_seconds: int
+    seconds_from_start: int
+
+    def values(self) -> list:
+        return [str(val) for val in asdict(self).values()]

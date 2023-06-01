@@ -5,11 +5,8 @@ import pathlib
 from math import ceil
 from typing import Optional
 
-from ...utils import CSV_FIELDNAMES, DEF_BASE_DIR
-
-
 class CSVLog:
-    def __init__(self, date: datetime.date, base_dir: pathlib.Path = None):
+    def __init__(self, date: datetime.date, base_dir: pathlib.Path):
         self._date = date
         self._year = str(date.year)
         self._month = str(date.month).zfill(2)
@@ -17,9 +14,7 @@ class CSVLog:
         self._day_of_week = str(self._date.weekday()).zfill(2)
         self._day = str(date.day).zfill(2)
 
-        self._fieldnames = CSV_FIELDNAMES
-
-        self._base_dir = base_dir if base_dir else DEF_BASE_DIR
+        self._base_dir = base_dir
         self._file = self._base_dir / self._year / self._month / self._week / f"{self._day_of_week}.csv"
 
     @classmethod

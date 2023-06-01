@@ -4,8 +4,9 @@ import warnings
 
 from typing import Optional
 
-from ...utils import DEF_BASE_DIR
 from .log import CSVLog
+
+DEF_BASE_DIR = pathlib.Path('daily_logs')
 
 
 class CSVDatabase:
@@ -33,7 +34,8 @@ class CSVDatabase:
         else:
             interval_records = dict()
             if end_date < start_date:
-                warnings.warn("Not valid interval: end date is earlier than the start date.", category=UserWarning)
+                warnings.warn("Not valid interval_seconds: end date is earlier than the start date.",
+                              category=UserWarning)
                 return interval_records
             days = (end_date - start_date).days
             for t_delta in range(days + 1):

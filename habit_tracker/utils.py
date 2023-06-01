@@ -1,17 +1,6 @@
 # TODO change name of file, more concrete
 
-from enum import Enum, auto
-from pathlib import Path
-
-DEF_BASE_DIR = Path('daily_logs')
-
-CSV_FIELDNAMES = ["activity", "interval", "start_time"]
-
-
-class ReportType(Enum):
-    DAY = auto()
-    WEEK = auto()
-    MONTH = auto()
+from enum import Enum
 
 
 class Activity(Enum):
@@ -21,3 +10,4 @@ class Activity(Enum):
     STUDY = 3
     SPORT = 4
     LEISURE = 5
+

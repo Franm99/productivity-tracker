@@ -105,7 +105,7 @@ class TestCSBDatabase:
         after_date = datetime.date(2023, 1, 10)
 
         # WHEN trying to read from after_date to earlier_date from the database
-        with pytest.warns(UserWarning, match="Not valid interval: end date is earlier than the start date."):
+        with pytest.warns(UserWarning, match="Not valid interval_seconds: end date is earlier than the start date."):
             interval_records = csv_db.read_interval(start_date=after_date, end_date=earlier_date)
 
         # THEN the database retrieves an empty dictionary and raises a warning.
