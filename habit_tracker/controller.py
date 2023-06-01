@@ -1,5 +1,5 @@
 from .tracker import Tracker
-from .view import CmdView
+from .view.cli import CliView
 from .utils import Activity
 
 import datetime
@@ -7,7 +7,7 @@ import datetime
 
 class Controller:
     """ The controller communicates the View (UI) with the Model (Tracker)."""
-    def __init__(self, model: Tracker, view: CmdView):
+    def __init__(self, model: Tracker, view: CliView):
         """
         Class Constructor.
         :param model: model object implementing the business logic of the application.
@@ -24,12 +24,12 @@ class Controller:
         # TODO: This workflow is thought for only daily reports. Refactor.
         while True:
             self.ask_new_entry()
-            self.gui.show_selection(self.tracker.current_activity)
+            self.gui.display_selection(self.tracker.current_activity)
 
             self.wait()
             self.tracker.add_record()
 
-            if not self.gui.keep_tracking():
+            if not self.gui.confirm("Keep tracking?"):
                 break
 
     def generate_daily_report(self) -> None:
@@ -47,7 +47,7 @@ class Controller:
         :return: None
         """
         activities = [a.name for a in Activity]
-        current_activity = self.gui.get_new_entry(activities)
+        current_activity = int(self.gui.options_menu(activities))
         self.tracker.start(Activity(current_activity).name)
 
     def wait(self) -> None:
@@ -55,5 +55,5 @@ class Controller:
         Wait for event to trigger the end of the tracking stage for the current activity.
         :return: None
         """
-        self.gui.input_to_finish()
+        self.gui.wait_input("Type to finish", "q")
         self.tracker.stop()
