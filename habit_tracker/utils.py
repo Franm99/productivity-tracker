@@ -1,7 +1,9 @@
+# TODO change name of file, more concrete
+
 from enum import Enum, auto
 from pathlib import Path
 
-DEF_LOGS_DIR = Path('daily_logs')
+DEF_BASE_DIR = Path('daily_logs')
 
 CSV_FIELDNAMES = ["activity", "interval", "start_time"]
 

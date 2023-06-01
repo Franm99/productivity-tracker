@@ -1,6 +1,6 @@
 .idea/
 venv/
-*/daily_logs/
+**/daily_logs/
 .pytest_cache/
 tmp_logs/
 sandbox/

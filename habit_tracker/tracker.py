@@ -2,7 +2,7 @@ from datetime import datetime
 import pathlib
 import time
 
-from .database import CSVDatabase
+from .database.csv.database import CSVDatabase
 from .report import Report
 
 
