@@ -36,18 +36,18 @@ will start to work for your new journey.
 ### Week 1: Basic functionalities, UI, Testing
 
 - [x] **Pie chart for a certain period:** Show percentage of time taken for each user activity.
-- [ ] **Linear chart for a full daily basis:** Graphic representing hours of the day at the X axis and the set
+- [x] **Linear chart for a full daily basis:** Graphic representing hours of the day at the X axis and the set
 of activities at the Y axis. For a single day report, show periods employed on each activity. For multiple day
 reports (weekly and monthly reports), show most common activity on each hour of the day.
 - [x] **Organize database by months and weeks:** Logs should be saved on a specific month/week folder, so it's
 easier to compute weekly and monthly reports afterwards.
-- [ ] **Basic Command Line UI:** Build a first UI version for CLI to be able to test the app. This UI must allow to:
+- [x] **Basic Command Line UI:** Build a first UI version for CLI to be able to test the app. This UI must allow to:
   - Select current activity and control its period.
   - Finish tracking.
   - Graphics visualization options: daily report, last weekly/monthly report or to date.
 - [ ] **Testing:** Write Unit tests.
   - [ ] Tracker
-  - [x] Database
+  - [ ] Database
   - [ ] Report
   - [ ] Controller
   - [ ] UI

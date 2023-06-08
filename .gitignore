@@ -1,6 +1,7 @@
 .idea/
 venv/
-**/daily_logs/
-.pytest_cache/
+**/.pytest_cache/
 tmp_logs/
 sandbox/
+**/*.csv
+**/*.json
