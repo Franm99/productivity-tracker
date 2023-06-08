@@ -36,6 +36,7 @@ class CSVLog:
         if self.exists() and self._file.stat().st_size > 0:
             with open(self._file, "r") as f:
                 csv_reader = csv.reader(f, delimiter=",")
+                # TODO: save integer values as integers instead of strings
                 return [row for row in csv_reader]  # TODO think about how to use generator here
         else:
             return []

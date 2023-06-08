@@ -46,9 +46,9 @@ easier to compute weekly and monthly reports afterwards.
   - Finish tracking.
   - Graphics visualization options: daily report, last weekly/monthly report or to date.
 - [ ] **Testing:** Write Unit tests.
-  - [ ] Tracker
-  - [ ] Database
-  - [ ] Report
+  - [x] Tracker
+  - [x] Database
+  - [X] Report
   - [ ] Controller
   - [ ] UI
   - [ ] Possible workflows

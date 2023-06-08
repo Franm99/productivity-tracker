@@ -118,14 +118,13 @@ class Controller:
 
         self.stage = Stage.OtherReports
 
-    def generate_daily_report(self) -> None:
+    def generate_daily_report(self, date: datetime.date = datetime.date.today()) -> None:
         """
         Generate Daily report based on current data.
         :return: None
         """
-        report = self.tracker.generate_report(datetime.date.today())
-        report.daily_time_per_activity()
-        report.show()
+        report = self.tracker.generate_report(date)
+        report.show_daily_report(date)
 
     def show_more_reports(self):
 
