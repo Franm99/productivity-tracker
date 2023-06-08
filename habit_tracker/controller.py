@@ -65,7 +65,7 @@ class Controller:
             if load_db:
                 selected = self.gui.options_menu(self.db_list)
                 self.gui.message(f'Loading database: {selected}')
-                db = CSVDatabase.load_from_metadata(selected, self.db_par_dir)
+                db = CSVDatabase.load_from_name(selected, self.db_par_dir)
 
             else:
                 self.stage = Stage.CreateDatabase

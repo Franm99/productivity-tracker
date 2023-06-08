@@ -92,7 +92,7 @@ class TestCSVLog:
         # WHEN creating a CSVLog instance
         # AND writing a row to its log file
         expected = [
-            ["a", "b", "c", "d"],   # First row
+            ["a", "b", "c.txt", "d"],   # First row
             ["e", "f", "g", "h"],   # Second row
         ]
         with open(csv_new_log._file, "a+", newline='') as f:
