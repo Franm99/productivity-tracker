@@ -18,7 +18,8 @@ def sample_report():
         datetime.date(2023, 1, 3): [
             [0, 7200, 32400],
             [1, 3600, 41400],
-            [0, 1200, 54000]
+            [0, 1200, 54000],
+            [2, 3600, 60000]
         ]
     }
 
@@ -39,7 +40,7 @@ class TestReport:
         sample_date = datetime.date(2023, 1, 3)  # Contains multiple records for the same activity
 
         actual = sample_report.daily_hours_per_activity(sample_date)
-        expected = {0: 8400, 1: 3600}
+        expected = {0: 8400, 1: 3600, 2: 3600}
 
         assert expected == actual
 
@@ -61,7 +62,7 @@ class TestReport:
 
     def test_plot_time_per_activity(self, sample_report):
         # TODO needs manual interaction. Find a better way to test.
-        sample_date = datetime.date(2023, 1, 1)
+        sample_date = datetime.date(2023, 1, 3)
         sample_report.plot_time_per_activity(sample_date)
         plt.show()
 

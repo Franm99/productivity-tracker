@@ -1,6 +1,8 @@
 # Productivity Tracker
 
-![Sample graph](src/sample.png "Sample Graph")
+| Total hours per activity                       |            Intervals throughout the day            |
+|------------------------------------------------|:--------------------------------------------------:|
+| ![Sample graph](src/sample.png "Sample Graph") | ![Sample graph](src/sample_day.png "Sample Graph") |
 
 Short script to execute while you're on your daily work routine to keep track
 of your productivity based on the time you spent on different actions.

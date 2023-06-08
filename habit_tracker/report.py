@@ -63,7 +63,7 @@ class Report:
                         np.datetime64(str(base_dt + datetime.timedelta(hours=22, minutes=0))))
 
             ax.set_yticks(np.arange(len(self.activity_set)), labels=self.activity_set)
-            ax.set_ylim(-0.5, len(self.activity_set) + 0.5)
+            ax.set_ylim(-0.5, len(self.activity_set) -0.5)
 
             locator = mdates.AutoDateLocator(minticks=12, maxticks=24)
             formatter = mdates.ConciseDateFormatter(locator)
