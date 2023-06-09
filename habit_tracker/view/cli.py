@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from .view import View
 
@@ -14,19 +14,20 @@ class CliView(View):
         """
         super().__init__()
 
-    def options_menu(self, options: list) -> str:
+    def options_menu(self, options: list) -> Optional[str]:
         print(' | '.join(f'{idx}. {item}' for idx, item in enumerate(options)))
         self.print_separator()
 
         while True:
-            selected_idx = int(input("Choose a number: "))
+            user_input = input("Choose a number: ")
             try:
+                selected_idx = int(user_input)
                 if selected_idx in range(len(options)):
                     return options[selected_idx]
                 else:
                     self.invalid_input(selected_idx)
             except ValueError:
-                self.invalid_input(selected_idx)
+                self.invalid_input(user_input)
 
     def confirm(self, message: str) -> bool:
         while True:
@@ -53,14 +54,14 @@ class CliView(View):
             else:
                 self.invalid_input(ans)
 
-    def get_list(self, message):
+    def get_list(self, message: str) -> list[str]:
         print(message)
         print("(Press 'q' to finish)")
 
         items = list()
         end_of_list = False
         while not end_of_list:
-            new_item = input()
+            new_item = input(">")
 
             if new_item == 'q':
                 end_of_list = True
