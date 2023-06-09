@@ -35,7 +35,7 @@ will start to work for your new journey.
 
 ## Goals
 
-### Week 1: Basic functionalities, UI, Testing
+### Week 1: Basic functionalities, UI, Testing (DONE)
 
 - [x] **Pie chart for a certain period:** Show percentage of time taken for each user activity.
 - [x] **Linear chart for a full daily basis:** Graphic representing hours of the day at the X axis and the set
@@ -47,13 +47,13 @@ easier to compute weekly and monthly reports afterwards.
   - Select current activity and control its period.
   - Finish tracking.
   - Graphics visualization options: daily report, last weekly/monthly report or to date.
-- [ ] **Testing:** Write Unit tests.
+- [x] **Testing:** Write Unit tests.
   - [x] Tracker
   - [x] Database
   - [X] Report
-  - [ ] Controller
-  - [ ] UI
-  - [ ] Possible workflows
+  - [x] Controller
+  - [x] UI
+  - [x] Possible workflows
 
 ### Week 2: GUI
 

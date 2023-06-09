@@ -66,3 +66,10 @@ class CSVDatabase:
                 date = start_date + datetime.timedelta(days=t_delta)
                 interval_records[date] = CSVLog(date, self.metadata.db_path).read()
             return interval_records
+
+    @property
+    def name(self):
+        return self.metadata.name
+
+    def __eq__(self, other):
+        return self.metadata.file == other.metadata.file

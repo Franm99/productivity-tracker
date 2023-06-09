@@ -21,7 +21,7 @@ class Stage(Enum):
 
 class Controller:
     """ The controller communicates the View (UI) with the Model (Tracker)."""
-    def __init__(self, view: CliView, db_par_dir: str = None):
+    def __init__(self, view: CliView, db_par_dir: pathlib.Path = None):
         self.tracker = None
         self.gui = view
         self.db_par_dir: pathlib.Path = db_par_dir if db_par_dir else DEF_DB_PAR_DIR
@@ -29,9 +29,17 @@ class Controller:
         if not self.db_par_dir.exists():
             self.db_par_dir.mkdir(parents=True)
 
-        self.db_list = [sub_dir.name for sub_dir in self.db_par_dir.iterdir() if sub_dir.is_dir()]
+        self.db_list = self.find_databases()  # TODO: db's created after init are not listed here
 
         self.stage = Stage.SelectDatabase
+
+    def find_databases(self) -> list[str]:
+        db_list = []
+        db_par_dir_items = self.db_par_dir.iterdir()
+        for item in db_par_dir_items:
+            if item.is_dir() and (item / "metadata.json").is_file():
+                db_list.append(item.name)
+        return db_list
 
     def run(self) -> None:
         """
@@ -78,6 +86,7 @@ class Controller:
         db_name = self.gui.get_input("Choose a name for your habit tracker.")
         if db_name in self.db_list:
             self.gui.message(f'The name "{db_name}" is already used. Try another one.')
+            self.stage = Stage.CreateDatabase
 
         else:
             activities_list = self.gui.get_list("Type a list of activities to track.")
@@ -91,6 +100,8 @@ class Controller:
         self.wait()
         if not self.gui.confirm("Track a new activity?"):
             self.stage = Stage.DailyReport
+        else:
+            self.stage = Stage.Track
 
     def ask_new_entry(self) -> None:
         """
