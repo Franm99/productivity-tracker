@@ -7,9 +7,6 @@ import numpy as np
 
 
 class Report:
-
-    plt.style.use('seaborn-v0_8-darkgrid')
-
     def __init__(self, records: dict[datetime.date], activity_set: list[str]):
         self.records = records
         self.daily_records = dict()
@@ -18,47 +15,25 @@ class Report:
     def daily_hours_per_activity(self, date: datetime.date) -> dict[int, int]:
         daily_records = self.records.get(date, None)
 
-        total_per_activity = dict()
-        if daily_records:
-            for record in daily_records:
-                # accumulate seconds from different records on each activity
-                total_per_activity[record[0]] = int(record[1]) + total_per_activity.get(record[0], 0)
-
-        return total_per_activity
-
-    def show_daily_report(self, date: datetime.date = None):
-        date = date if date else datetime.date.today()
-        self.plot_time_per_activity(date)
-        self.plot_intervals_in_day(date)
-        plt.show()
-
-    def plot_time_per_activity(self, date: datetime.date) -> tuple[plt.Figure, plt.Axes]:
-        total_per_activity = self.daily_hours_per_activity(date)
-
-        fig, ax = plt.subplots(1, 1)
-        seconds_spent = sum(total_per_activity.values())
+    def plot_time_per_activity(self, ax: plt.axis):
+        seconds_spent = sum(self.total_secs_per_activity.values())
 
         def autopct_format(pctg):
             value = datetime.timedelta(seconds=round(seconds_spent * pctg / 100))
             return f'{pctg:.2f}%\n({value})'
 
-        x = total_per_activity.values()
+        x = self.total_secs_per_activity.values()
         # TODO remove casting to int once the database saves int instead of str
-        labels = [self.activity_set[int(key)] for key in total_per_activity.keys()]
+        labels = [self.activity_set[int(key)] for key in self.total_secs_per_activity.keys()]
 
         ax.pie(x, labels=labels, autopct=autopct_format, wedgeprops={'linewidth': 3.0, 'edgecolor': 'white'})
-        ax.set_title(date)
-        fig.tight_layout()
 
-        return fig, ax
-
-    def plot_intervals_in_day(self, date: datetime.date) -> tuple[plt.Figure, plt.Axes]:
+    def plot_intervals_in_day(self, ax: plt.axis, date: datetime.date):
         daily_records = self.records.get(date, None)
 
         if daily_records:
             base_dt = datetime.datetime.combine(date, datetime.datetime.min.time())  # Convert date to datetime
 
-            fig, ax = plt.subplots(1, 1, figsize=(14, 5))
             ax.set_xlim(np.datetime64(str(base_dt + datetime.timedelta(hours=7, minutes=0))),
                         np.datetime64(str(base_dt + datetime.timedelta(hours=22, minutes=0))))
 
@@ -88,7 +63,41 @@ class Report:
                     x = interval
                     self.plot_day(x, y, linewidth=25, solid_capstyle='butt', color='blue')
 
-            return fig, ax
+    def plot_intervals(self, ax: plt.axis):
+
+        if not self.records.keys():
+            return []
+        else:
+            base_dt = list(self.records.keys())[0]
+            base_dt = datetime.datetime.combine(base_dt, datetime.datetime.min.time())
+
+        ax.set_xlim((np.datetime64(str(base_dt + datetime.timedelta(hours=6))),
+                     np.datetime64(str(base_dt + datetime.timedelta(hours=22)))))
+
+        ax.set_yticks(np.array(list(range(len(self.activity_set)))), labels=self.activity_set)
+        ax.set_ylim(-0.5, 2.5)
+
+        locator = mdates.HourLocator(interval=1)
+        formatter = mdates.DateFormatter('%H:%M')
+
+        ax.xaxis.set_major_locator(locator)
+        ax.xaxis.set_major_formatter(formatter)
+
+        for daily_records in self.records.values():
+            intervals = self.compute_intervals(daily_records, base_dt)
+
+            for label in intervals:
+                y = [int(label)] * 2
+                for interval in intervals[label]:
+                    self.plot_day(interval, y, ax=ax, linewidth=25, solid_capstyle='butt', color=(0.2, 0.2, 0.2, 0.2))
+
+    def show(self):
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5), gridspec_kw={'width_ratios': [1, 3]})
+
+        self.plot_time_per_activity(ax1)
+        self.plot_intervals(ax2)
+
+        plt.show()
 
     @staticmethod
     def plot_day(x, y, ax=None, where='post', **kwargs):
@@ -105,3 +114,29 @@ class Report:
             ax = plt.gca()
 
         return ax.plot(X.flatten(), Y.flatten(), **kwargs)
+
+    @staticmethod
+    def compute_intervals(records, base_dt):
+        intervals_per_activity = dict()
+        for record in records:
+            start = base_dt + datetime.timedelta(seconds=int(record[2]))
+            end = start + datetime.timedelta(seconds=int(record[1]))
+
+            if record[0] not in intervals_per_activity:
+                intervals_per_activity[record[0]] = [[start, end]]
+            else:
+                intervals_per_activity[record[0]].append([start, end])
+
+        return intervals_per_activity
+
+    @property
+    def total_secs_per_activity(self) -> dict[int, int]:
+        """
+        Returns the total amount of seconds spent in a specific activity along the set of days that are registered
+        in the report.
+        """
+        time_per_activity = dict()
+        for daily_records in self.records.values():
+            for entry in daily_records:
+                time_per_activity[entry[0]] = time_per_activity.get(entry[0], 0) + int(entry[1])
+        return time_per_activity

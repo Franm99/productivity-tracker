@@ -56,7 +56,7 @@ class Controller:
             if self.stage == Stage.DailyReport:
                 self.show_daily_reports()
             if self.stage == Stage.OtherReports:
-                self.show_more_reports()
+                self.show_interval_report()
 
         self.end_program()
 
@@ -125,20 +125,15 @@ class Controller:
 
     def show_daily_reports(self):
         if self.gui.confirm("Show today's report?"):
-            self.generate_daily_report()
+            report = self.tracker.generate_report(datetime.date.today())
+            report.show()
 
         self.stage = Stage.OtherReports
 
-    def generate_daily_report(self, date: datetime.date = datetime.date.today()) -> None:
-        """
-        Generate Daily report based on current data.
-        :return: None
-        """
-        report = self.tracker.generate_report(date)
-        report.show_daily_report(date)
-
-    def show_more_reports(self):
-
+    def show_history_report(self):
+        if self.gui.confirm("Show your history?"):
+            # TODO complete
+            pass
         self.stage = Stage.End
 
     def end_program(self):
