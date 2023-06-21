@@ -74,8 +74,8 @@ class Tracker:
             records = self._db.read_interval(self._date)
 
         else:
-            start_date = datetime.datetime.strptime(start_date, "%d-%m-%Y")
-            end_date = datetime.datetime.strptime(end_date, "%d-%m-%Y") if end_date else None
+            start_date = datetime.datetime.strptime(start_date, "%d-%m-%Y").date()
+            end_date = datetime.datetime.strptime(end_date, "%d-%m-%Y").date() if end_date else None
             records = self._db.read_interval(start_date, end_date)
 
         return Report(records, activity_set=self._db.metadata.activities)

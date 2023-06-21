@@ -148,7 +148,8 @@ class TestController:
 
         controller_empty_tracker.track()
         date = controller_empty_tracker.tracker._date
-        report = controller_empty_tracker.tracker.generate_report(date)
+        date_str = date.strftime("%d-%m-%Y")
+        report = controller_empty_tracker.tracker.generate_report(date_str)
 
         assert len(report.records[date]) == 1
         assert controller_empty_tracker.stage == Stage.DailyReport
@@ -159,7 +160,8 @@ class TestController:
 
         controller_empty_tracker.track()
         date = controller_empty_tracker.tracker._date
-        report = controller_empty_tracker.tracker.generate_report(date)
+        date_str = date.strftime("%d-%m-%Y")
+        report = controller_empty_tracker.tracker.generate_report(date_str)
 
         print(report.records)
         assert len(report.records[date]) == 1
