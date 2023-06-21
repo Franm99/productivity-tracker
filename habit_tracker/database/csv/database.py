@@ -10,6 +10,8 @@ from .metadata import DBMetadata
 
 DEF_BASE_DIR = pathlib.Path('.db')
 
+# TODO reformat database tree folder: use year/month/days instead of year/month/week/weekday.
+
 
 class CSVDatabase:
     """ Interface to operate with a CSV file as a database."""

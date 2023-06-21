@@ -1,6 +1,5 @@
 import datetime
 
-import matplotlib.pyplot as plt
 import pytest
 
 from habit_tracker.report import Report
@@ -73,24 +72,20 @@ class TestReport:
         assert expected == actual
 
     def test_plot_seconds_per_activity_single_day(self, report_single_day):
-        fig, ax = plt.subplots(1, 1)
-        report_single_day.plot_time_per_activity(ax)
-        plt.show()
+        report_single_day.plot_time_per_activity()
+        report_single_day.graphics.show()
 
     def test_plot_seconds_per_activity_multiple_days(self, report_multiple_days):
-        fig, ax = plt.subplots(1, 1)
-        report_multiple_days.plot_time_per_activity(ax)
-        plt.show()
+        report_multiple_days.plot_time_per_activity()
+        report_multiple_days.graphics.show()
 
     def test_plot_intervals_single_day(self, report_single_day):
-        fig, ax = plt.subplots(1, 1, figsize=(14, 4))
-        report_single_day.plot_intervals(ax)
-        plt.show()
+        report_single_day.plot_intervals()
+        report_single_day.graphics.show()
 
     def test_plot_intervals_multiple_days(self, report_multiple_days):
-        fig, ax = plt.subplots(1, 1, figsize=(14, 4))
-        report_multiple_days.plot_intervals(ax)
-        plt.show()
+        report_multiple_days.plot_intervals()
+        report_multiple_days.graphics.show()
 
     def test_plot_report_single_day(self, report_single_day):
         report_single_day.show()

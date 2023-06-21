@@ -58,12 +58,12 @@ easier to compute weekly and monthly reports afterwards.
 ### Week 2: GUI
 
 - [ ] **Select GUI framework:** Investigate options for GUIs with Python. Select the best option.
-- [ ] **Past reports visualization:** New option to check past reports so the user can study the increment/decrement
+- [x] **Past reports visualization:** New option to check past reports so the user can study the increment/decrement
 of productivity.
 
 ### Week 3: Extras and Add-ons
 - [ ] **Automatic tracking:** Investigate if it's possible to track mouse interactions, active windows and user inactivity
 with Python (look for packages). If it's possible, try to implement.
 - [ ] **Selection of way of tracking:** if automatic tracking is possible, let the user select what type of tracking is desired.
-- [ ] **Productivity analysis:** Compare reports and define a logic to measure productivity. Labor and rest periods
+- [x] **Productivity analysis:** Compare reports and define a logic to measure productivity. Labor and rest periods
 should be differentiated to achieve this.
