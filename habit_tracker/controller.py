@@ -56,7 +56,7 @@ class Controller:
             if self.stage == Stage.DailyReport:
                 self.show_daily_reports()
             if self.stage == Stage.OtherReports:
-                self.show_interval_report()
+                self.show_history_report()
 
         self.end_program()
 
@@ -125,15 +125,23 @@ class Controller:
 
     def show_daily_reports(self):
         if self.gui.confirm("Show today's report?"):
-            report = self.tracker.generate_report(datetime.date.today())
+            report = self.tracker.generate_report(start_date='today')
             report.show()
 
         self.stage = Stage.OtherReports
 
     def show_history_report(self):
         if self.gui.confirm("Show your history?"):
-            # TODO complete
-            pass
+            # Ask start and end date
+            start_date, end_date = None, None
+            while not start_date:
+                start_date = self.gui.get_input_date("> Start Date: ")
+            while not end_date:
+                end_date = self.gui.get_input_date("> End date: ")
+
+            report = self.tracker.generate_report(start_date, end_date)
+            report.show()
+
         self.stage = Stage.End
 
     def end_program(self):

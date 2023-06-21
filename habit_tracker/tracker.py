@@ -69,8 +69,15 @@ class Tracker:
             self._db.update_log(self._date, record.values())
             return True
 
-    def generate_report(self, start_date: datetime.date, end_date: datetime.date = None) -> Report:
-        records = self._db.read_interval(start_date, end_date)
+    def generate_report(self, start_date: str, end_date: str = None) -> Report:
+        if start_date == 'today':
+            records = self._db.read_interval(self._date)
+
+        else:
+            start_date = datetime.datetime.strptime(start_date, "%d-%m-%Y")
+            end_date = datetime.datetime.strptime(end_date, "%d-%m-%Y") if end_date else None
+            records = self._db.read_interval(start_date, end_date)
+
         return Report(records, activity_set=self._db.metadata.activities)
 
     @property

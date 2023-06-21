@@ -112,7 +112,7 @@ class TestTrackerWithCSVDatabase:
     def test_generate_report_empty_daily_report(self, sample_tracker):
         # GIVEN a tracker instance
         # WHEN trying to generate a daily report for a sample_date with no data
-        sample_date = datetime.date(1999, 1, 1)
+        sample_date = "01-01-1999"
         report = sample_tracker.generate_report(sample_date)
 
         # THEN a report is obtained
@@ -121,8 +121,8 @@ class TestTrackerWithCSVDatabase:
     def test_generate_report_not_valid_dates(self, sample_tracker):
         # GIVEN a tracker instance
         # WHEN trying to generate a report for dates in not valid order
-        start_date = datetime.date(1999, 1, 30)
-        end_date = datetime.date(1999, 1, 10)
+        start_date = "30-01-1999"
+        end_date = "10-01-1999"
         report = sample_tracker.generate_report(start_date, end_date)
 
         # THEN a report is obtained

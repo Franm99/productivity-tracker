@@ -11,9 +11,7 @@ class Report:
         self.records = records
         self.daily_records = dict()
         self.activity_set = activity_set
-
-    def daily_hours_per_activity(self, date: datetime.date) -> dict[int, int]:
-        daily_records = self.records.get(date, None)
+        # self.graphics = Graphics(figsize=(14, 6))
 
     def plot_time_per_activity(self, ax: plt.axis):
         seconds_spent = sum(self.total_secs_per_activity.values())

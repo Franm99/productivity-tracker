@@ -1,4 +1,5 @@
 from typing import Any, Optional
+import re
 
 from .view import View
 
@@ -79,6 +80,15 @@ class CliView(View):
     @staticmethod
     def get_input(message: str = None):
         return input(message)
+
+    def get_input_date(self, message: str = None):
+        i = input(message)
+
+        if bool(re.search(r"^(0?[1-9]|[1-2][0-9]|3[0,1])-(0?[1-9]|1[0-2])-(\d{4})$", i)):
+            return i
+        else:
+            self.invalid_input(i)
+            return None
 
     @staticmethod
     def print_separator():
