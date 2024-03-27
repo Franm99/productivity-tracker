@@ -13,7 +13,7 @@ Sample actions given are: PROJECT, COURSE, HOUSE, REST
 
 The module **habit_tracker** implements the 
 [MVC (Model-View-Controller) Design Pattern](https://www.geeksforgeeks.org/mvc-design-pattern/) 
-to separate the data model, the business logic and the presentation to the user. hello
+to separate the data model, the business logic and the presentation to the user.
 
 
 ![Structure diagram](src/mvc.svg "Structure Diagram")
