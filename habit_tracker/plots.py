@@ -29,7 +29,7 @@ class Graphics:
                                np.datetime64(str(base_date + datetime.timedelta(hours=22)))))
 
             self.ax2.set_yticks(np.array(list(range(len(activity_set)))), labels=activity_set)
-            self.ax2.set_ylim(-0.5, 2.5)
+            self.ax2.set_ylim(-0.5, len(activity_set) - 0.5)
 
             locator = mdates.HourLocator(interval=1)
             formatter = mdates.DateFormatter('%H:%M')
