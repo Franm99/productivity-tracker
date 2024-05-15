@@ -1,0 +1,3 @@
+[ ] Make more intuitive the way date is set when trying to show historic reports
+[ ] Improve graphics UI.
+[ ] ...
