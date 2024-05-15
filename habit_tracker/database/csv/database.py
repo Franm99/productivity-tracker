@@ -1,3 +1,5 @@
+# TODO consider using pandas: intervals can be computed in-site or in a new df.
+
 import datetime
 import pathlib
 import warnings
@@ -5,6 +7,7 @@ import json
 
 from typing import Optional
 
+# TODO: check imports as modules
 from .log import CSVLog
 from .metadata import DBMetadata
 
@@ -16,7 +19,7 @@ DEF_BASE_DIR = pathlib.Path('.db')
 class CSVDatabase:
     """ Interface to operate with a CSV file as a database."""
 
-    # TODO: add a set of databases being updated by the Create method to check if a db already exists.
+    # TODO: track set of existing databases to check if a db already exists.
 
     def __init__(self, metadata: DBMetadata):
         self.metadata = metadata
@@ -26,7 +29,7 @@ class CSVDatabase:
         metadata = DBMetadata(name=name, activities=activities, par_dir=par_dir)
         metadata.db_path.mkdir(parents=True)
         with open(metadata.file, "w") as f:
-            json_string = metadata.json(indent=4)
+            json_string = metadata.model_dump_json(indent=4)
             f.write(json_string)
         return cls(metadata)
 
