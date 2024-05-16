@@ -6,6 +6,8 @@ import pathlib
 
 from typing import List
 
+from habit_tracker import settings
+
 """
 TODO:
 - Add logger
@@ -42,7 +44,7 @@ DATA VISUALIZATION
 class SqliteDatabase:
     def __init__(self, name: str):
         self._name = name
-        self._conn: Connection = sqlite3.connect(f'a.db')
+        self._conn: Connection = sqlite3.connect(settings.DB_DIR / 'sqlite3.db')
         self._cur: Cursor = self._conn.cursor()
 
     def connect_with_table(self, table_name: str, headers: List[str]):
