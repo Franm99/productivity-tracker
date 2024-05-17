@@ -1,7 +1,10 @@
 from typing import Any, Optional
 import re
+import logging
 
 from .view import View
+
+logger = logging.getLogger(__name__)
 
 
 class CliView(View):
@@ -13,14 +16,18 @@ class CliView(View):
         """
         Class Constructor.
         """
+        logger.debug("VIEW: Command line interface")
         super().__init__()
 
     def options_menu(self, options: list) -> Optional[str]:
+        logger.info("Printing list of options.")
         print(' | '.join(f'{idx}. {item}' for idx, item in enumerate(options)))
         self.print_separator()
 
         while True:
             user_input = input("Choose a number: ")
+            logger.debug(f"Selected number: {user_input}")
+
             try:
                 selected_idx = int(user_input)
                 if selected_idx in range(len(options)):
@@ -45,15 +52,18 @@ class CliView(View):
         print("->", selection)
 
     def invalid_input(self, user_input: Any) -> None:
+        logger.info(f'Invalid user input: {user_input}.')
         print(f'Input "{user_input}" is not valid. Try again.')
 
     def wait_input(self, message: str, expected_key: str) -> None:
+        logger.info('Waiting for user input to end wait loop.')
         while True:
             ans = input(f"{message} [{expected_key}]: ")
             if ans == expected_key:
                 break
             else:
                 self.invalid_input(ans)
+        logger.info('Exit from wait loop.')
 
     def get_list(self, message: str) -> list[str]:
         print(message)

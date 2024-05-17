@@ -3,10 +3,13 @@ import sqlite3
 from sqlite3 import Connection, Cursor
 import datetime
 import pathlib
+import logging
 
 from typing import List
 
 from habit_tracker import settings
+
+logger = logging.getLogger(__name__)
 
 """
 TODO:
