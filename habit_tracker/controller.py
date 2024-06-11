@@ -4,7 +4,6 @@ from .tracker import Tracker
 from .database.csv.database import CSVDatabase
 from .view.cli import CliView
 
-import datetime
 import pathlib
 
 DEF_DB_PAR_DIR = pathlib.Path('.db')
@@ -61,7 +60,7 @@ class Controller:
         self.end_program()
 
     def select_database(self):
-
+        self.gui.section_intro("Choose Database")
         if not self.db_list:
             self.gui.message("No databases found.")
             self.stage = Stage.CreateDatabase
@@ -71,10 +70,9 @@ class Controller:
             load_db = self.gui.confirm(f'{len(self.db_list)} existing database(s) found. Load?')
 
             if load_db:
-                selected = self.gui.options_menu(self.db_list)
+                selected = self.gui.options_menu("Choose your database", self.db_list)
                 self.gui.message(f'Loading database: {selected}')
                 db = CSVDatabase.load_from_name(selected, self.db_par_dir)
-
             else:
                 self.stage = Stage.CreateDatabase
                 return
@@ -83,7 +81,8 @@ class Controller:
         self.stage = Stage.Track
 
     def create_database(self):
-        db_name = self.gui.get_input("Choose a name for your habit tracker.")
+        self.gui.section_intro("Create a new Database")
+        db_name = self.gui.get_input("Choose a name")
         if db_name in self.db_list:
             self.gui.message(f'The name "{db_name}" is already used. Try another one.')
             self.stage = Stage.CreateDatabase
@@ -96,10 +95,12 @@ class Controller:
             self.stage = Stage.Track
 
     def track(self):
+        self.gui.print_separator()
         self.ask_new_entry()
         self.wait()
         if not self.gui.confirm("Track a new activity?"):
             self.stage = Stage.DailyReport
+            self.save_reports()
         else:
             self.stage = Stage.Track
 
@@ -109,7 +110,7 @@ class Controller:
         :return: None
         """
         activity_set = self.tracker.activity_set
-        current_activity = self.gui.options_menu(activity_set)
+        current_activity = self.gui.options_menu("Choose an activity to track", activity_set)
         activity_idx = activity_set.index(current_activity)
 
         self.gui.display_selection(current_activity)
@@ -120,13 +121,16 @@ class Controller:
         Wait for event to trigger the end of the tracking stage for the current activity.
         :return: None
         """
-        self.gui.wait_input("Type to finish", "q")
+        self.gui.wait_input("Do your best!", "q")  # TODO add a random message
         self.tracker.stop()
 
     def show_daily_reports(self):
+        self.gui.section_intro("Show reports")
         if self.gui.confirm("Show today's report?"):
+            self.gui.message("Close the popup window to proceed...")
             report = self.tracker.generate_report(start_date='today')
             report.show()
+            report.graphics.fig.savefig("sample")
 
         self.stage = Stage.OtherReports
 
@@ -135,14 +139,18 @@ class Controller:
             # Ask start and end date
             start_date, end_date = None, None
             while not start_date:
-                start_date = self.gui.get_input_date("> Start Date: ")
+                start_date = self.gui.get_input_date("> Start Date [dd-mm-yyyy]: ")
             while not end_date:
-                end_date = self.gui.get_input_date("> End date: ")
+                end_date = self.gui.get_input_date("> End date [dd-mm-yyyy]: ")
 
+            self.gui.message("Close the popup window to proceed...")
             report = self.tracker.generate_report(start_date, end_date)
             report.show()
 
         self.stage = Stage.End
+
+    def save_reports(self):
+        pass
 
     def end_program(self):
         pass

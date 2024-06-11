@@ -6,7 +6,7 @@ class View(ABC):
         pass
 
     @abstractmethod
-    def options_menu(self, options: list) -> str:
+    def options_menu(self, message: str, options: list) -> str:
         pass
 
     @abstractmethod

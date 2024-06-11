@@ -1,8 +1,14 @@
 from typing import Any, Optional
 import re
 import logging
-
+from rich.console import Console
+from rich.panel import Panel
+from rich.columns import Columns
+from rich import print, style
+from rich.prompt import Prompt, Confirm
 from .view import View
+from rich.progress import Progress, TimeElapsedColumn, SpinnerColumn
+
 
 logger = logging.getLogger(__name__)
 
@@ -18,38 +24,23 @@ class CliView(View):
         """
         logger.debug("VIEW: Command line interface")
         super().__init__()
+        self.console = Console(force_terminal=True)
 
-    def options_menu(self, options: list) -> Optional[str]:
+    def options_menu(self, message: str, options: list) -> Optional[str]:
         logger.info("Printing list of options.")
-        print(' | '.join(f'{idx}. {item}' for idx, item in enumerate(options)))
-        self.print_separator()
-
-        while True:
-            user_input = input("Choose a number: ")
-            logger.debug(f"Selected number: {user_input}")
-
-            try:
-                selected_idx = int(user_input)
-                if selected_idx in range(len(options)):
-                    return options[selected_idx]
-                else:
-                    self.invalid_input(selected_idx)
-            except ValueError:
-                self.invalid_input(user_input)
+        self.console.print(
+            Panel(
+                Columns(options, expand=True, align='center', padding=(0, 0)),
+                title=message,
+            )
+        )
+        return Prompt.ask(choices=options, show_choices=False)
 
     def confirm(self, message: str) -> bool:
-        while True:
-            ans = input(f"{message} [y/n]")
-            self.print_separator()
-            if ans == "y":
-                return True
-            elif ans == "n":
-                return False
-            else:
-                self.invalid_input(ans)
+        return Confirm.ask(message)
 
     def display_selection(self, selection: str) -> None:
-        print("->", selection)
+        print(f"Currently doing -> [bold italic green]{selection}[/bold italic green]")
 
     def invalid_input(self, user_input: Any) -> None:
         logger.info(f'Invalid user input: {user_input}.')
@@ -57,12 +48,10 @@ class CliView(View):
 
     def wait_input(self, message: str, expected_key: str) -> None:
         logger.info('Waiting for user input to end wait loop.')
-        while True:
-            ans = input(f"{message} [{expected_key}]: ")
-            if ans == expected_key:
-                break
-            else:
-                self.invalid_input(ans)
+
+        with self.console.status("Press enter to finish", spinner="simpleDots"):
+            input()
+
         logger.info('Exit from wait loop.')
 
     def get_list(self, message: str) -> list[str]:
@@ -87,9 +76,19 @@ class CliView(View):
     def message(message: str):
         print(message, "\n")
 
+    def section_intro(self, message: str):
+        self.console.rule(
+            f"[bold green]{message}[/bold green]",
+            characters='=',
+            style=style.Style(
+                color='green',
+                bold=True,
+            )
+        )
+
     @staticmethod
     def get_input(message: str = None):
-        return input(message)
+        return input(f"{message} -> ")
 
     def get_input_date(self, message: str = None):
         i = input(message)
@@ -100,6 +99,5 @@ class CliView(View):
             self.invalid_input(i)
             return None
 
-    @staticmethod
-    def print_separator():
-        print("----")
+    def print_separator(self):
+        self.console.rule()
